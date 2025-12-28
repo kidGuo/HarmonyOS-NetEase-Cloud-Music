@@ -1,23 +1,22 @@
+import { Logger } from '../utils/Logger';
+
 @Entry
-@Component
+@ComponentV2
 struct Index {
-  @State message: string = 'Hello World';
+  @Provider() pathStack: NavPathStack = new NavPathStack();
+
+  aboutToAppear(): void {
+    Logger.info({ domain: 'Index' }, 'about to appear', 'Index')
+  }
 
   build() {
-    RelativeContainer() {
-      Text(this.message)
-        .id('HelloWorld')
-        .fontSize($r('app.float.page_text_font_size'))
-        .fontWeight(FontWeight.Bold)
-        .alignRules({
-          center: { anchor: '__container__', align: VerticalAlign.Center },
-          middle: { anchor: '__container__', align: HorizontalAlign.Center }
-        })
-        .onClick(() => {
-          this.message = 'Welcome';
-        })
+    Navigation(this.pathStack) {
+
     }
-    .height('100%')
-    .width('100%')
+    .onAppear(() => {
+      Logger.info({ domain: 'Index' }, 'on appear', 'Index');
+      this.pathStack.replacePathByName('Splash', false);
+    })
+    .hideNavBar(true)
   }
 }
