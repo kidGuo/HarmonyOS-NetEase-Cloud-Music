@@ -8,6 +8,7 @@ import { HomePage } from '../home/HomePage';
 import { MinePage } from '../mine/MinePage';
 import { NotePage } from '../note/NotePage';
 import { SearchPage } from '../search/SearchPage';
+import { DrawerPage } from './DrawerPage';
 
 @Builder
 function mainPageBuilder() {
@@ -67,6 +68,8 @@ export struct MainPage {
         .onChange((index: number) => {
           this.currentIdx = index;
         })
+
+        DrawerPage()
       }
     }
     .hideTitleBar(true)

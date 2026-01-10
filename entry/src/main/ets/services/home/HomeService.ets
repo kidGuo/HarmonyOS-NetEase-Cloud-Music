@@ -6,7 +6,7 @@ import { Logger } from '../../utils/Logger';
 import { JSON } from '@kit.ArkTS';
 import { RecommendItem } from '../../models/home/RecommendItem';
 import { httpClient } from '../../network/NetworkManager';
-import { AppAlbumResponse, AppListResponse, AppResultResponse, BaseResponse } from '../../network/BaseResponse';
+import { AppAlbumResponse, AppListResponse, AppResultsResponse, BaseResponse } from '../../network/BaseResponse';
 import { TopListItem } from '../../models/home/TopListItem';
 import { PersonalItem } from '../../models/home/PersonalItem';
 import { MVItem } from '../../models/home/MVItem';
@@ -64,7 +64,7 @@ export class HomeService {
 
     try {
       const response =
-        await httpClient.get<BaseResponse<AppResultResponse<RecommendItem>>>('/personalized/playlist', { limit: 10 });
+        await httpClient.get<BaseResponse<AppResultsResponse<RecommendItem>>>('/personalized/playlist', { limit: 10 });
       Logger.info({ domain: 'Net', tag: 'HomeService' },
         `Recommend playlist result:${JSON.stringify(response.data.result)}`);
       if (response.data.code === 200) {
@@ -91,7 +91,7 @@ export class HomeService {
     }
 
     try {
-      const response = await httpClient.get<BaseResponse<AppResultResponse<RecommendItem>>>('/personalized/newsong');
+      const response = await httpClient.get<BaseResponse<AppResultsResponse<RecommendItem>>>('/personalized/newsong');
       Logger.info({ domain: 'Net', tag: 'HomeService' },
         `New songs list:${JSON.stringify(response.data.result)}`);
       if (response.data.code === 200) {
@@ -119,7 +119,7 @@ export class HomeService {
 
     try {
       const response =
-        await httpClient.get<BaseResponse<AppResultResponse<PersonalItem>>>('/personalized/privatecontent');
+        await httpClient.get<BaseResponse<AppResultsResponse<PersonalItem>>>('/personalized/privatecontent');
       Logger.info({ domain: 'Net', tag: 'HomeService' },
         `Private contet:${JSON.stringify(response.data)}`);
       if (response.data.code === 200) {
@@ -146,7 +146,7 @@ export class HomeService {
     }
 
     try {
-      const response = await httpClient.get<BaseResponse<AppResultResponse<MVItem>>>('/personalized/mv');
+      const response = await httpClient.get<BaseResponse<AppResultsResponse<MVItem>>>('/personalized/mv');
       Logger.info({ domain: 'Net', tag: 'HomeService' },
         `Personal mv:${JSON.stringify(response.data)}`);
       if (response.data.code === 200) {

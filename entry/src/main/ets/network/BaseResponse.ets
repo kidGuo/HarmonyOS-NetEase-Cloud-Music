@@ -9,9 +9,14 @@ export interface BaseResponse<T> {
   data: T;
 }
 
-export interface AppResultResponse<T> {
+export interface AppResultsResponse<T> {
   code: number;
   result: T[];
+}
+
+export interface AppResultResponse<T> {
+  code: number;
+  result: T;
 }
 
 export interface AppListResponse<T> {

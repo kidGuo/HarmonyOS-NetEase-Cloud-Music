@@ -18,9 +18,8 @@ export struct SplashPage {
   build() {
     NavDestination() {
       Stack() {
-        Image('https://www.baidu.com')
-          .alt($r('app.media.vehicle_default_bg'))
-          .objectFit(ImageFit.Fill)
+        Image($r('app.media.launch_image'))
+          .objectFit(ImageFit.Cover)
           .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
           .width('100%')
           .height('100%')

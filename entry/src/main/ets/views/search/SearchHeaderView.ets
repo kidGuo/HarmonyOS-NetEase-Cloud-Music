@@ -12,31 +12,30 @@ export struct SearchHeaderView {
     Row() {
       ForEach(this.items, (item: SearchTopCate, idx: number) => {
         Column() {
-          Image('')
-            .overlay('no:' + idx.toString())
+          Image($r(item.icon))
             .objectFit(ImageFit.Cover)
-            .width(25)
-            .height(25)
+            .width(30)
+            .height(30)
 
           Blank()
-            .height(12)
+            .height(6)
 
           Text(item.title)
             .textAlign(TextAlign.Center)
             .fontSize(16)
             .fontColor(Color.Black)
-            .width('100%')
         }
         .alignItems(HorizontalAlign.Center)
+        .layoutWeight(1)
       }, (item: SearchTopCate) => item.id.toString());
     }
     .alignItems(VerticalAlign.Center)
-    .justifyContent(FlexAlign.SpaceBetween)
+    .justifyContent(FlexAlign.SpaceEvenly)
     .padding({
-      top: 20,
-      left: 30,
+      top: 10,
+      left: 26,
       bottom: 20,
-      right: 30
+      right: 26
     })
   }
 }

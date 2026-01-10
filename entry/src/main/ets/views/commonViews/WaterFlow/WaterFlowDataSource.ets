@@ -6,8 +6,9 @@ import { Logger } from '../../../utils/Logger';
 import json from '@ohos.util.json';
 import { WaterFlowItem } from './WaterFlowItem';
 
+@ObservedV2
 export class WaterFlowDataSource<T extends WaterFlowItem> implements IDataSource {
-  private items: T[] = [];
+  @Trace items: T[] = [];
   private listeners: DataChangeListener[] = [];
 
   private notifyDataReloaded() {
@@ -107,6 +108,14 @@ export class WaterFlowDataSource<T extends WaterFlowItem> implements IDataSource
   deleteItem(index: number) {
     this.items.splice(index, 1);
     this.notifyDataDelete(index);
+  }
+
+  deleteAllItems() {
+    if (this.items.length === 0) {
+      return;
+    }
+    this.items.splice(0, this.items.length);
+    this.notifyDataReloaded();
   }
 
   updateItem(item: T, startIdx: number) {

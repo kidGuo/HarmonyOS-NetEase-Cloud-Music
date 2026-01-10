@@ -15,6 +15,7 @@ import { JSON } from '@kit.ArkTS';
 import { AIWriterPage } from './AIWriterPage';
 import { MidnightFlightPage } from './MidnightFlightPage';
 import { WebComponent } from '../web/WebComponent';
+import { HomeNavBar } from '../../views/homePage/HomeNavBar';
 
 @ComponentV2
 export struct HomePage {
@@ -26,6 +27,50 @@ export struct HomePage {
   aboutToAppear(): void {
     this.viewModel.segmentItems.forEach((item): void => Logger.info({ domain: 'Home' },
       `name:${item.name}, id:${item.id}`))
+  }
+
+  @Builder
+  navBarBuilder() {
+    HomeNavBar({
+      titleView: () => {
+        this.titleViewBuilder()
+      },
+      rightView: () => {
+        this.rightActionsBuilder()
+      }
+    })
+      .width('100%')
+      .height(48)
+  }
+
+  @Builder
+  titleViewBuilder() {
+    SegmentedView({
+      items: this.viewModel.segmentItems,
+      selectedIndex: 1,
+      segmentController: this.segmentController,
+      onSegmentSelect: (index: number) => {
+        this.swiperController.changeIndex(index, true);
+      }
+    })
+      .height('100%')
+      .backgroundColor(Color.White)
+      .padding({ bottom: 6 })
+  }
+
+  @Builder
+  rightActionsBuilder() {
+    Row() {
+      Image($r('app.media.search_icon'))
+        .objectFit(ImageFit.Contain)
+        .size({ width: 44, height: 44 })
+        .padding({
+          top: 9,
+          left: 9,
+          bottom: 9,
+          right: 9
+        })
+    }
   }
 
   @Builder
@@ -51,16 +96,7 @@ export struct HomePage {
 
   build() {
     Column() {
-      SegmentedView({
-        items: this.viewModel.segmentItems,
-        selectedIndex: 1,
-        segmentController: this.segmentController,
-        onSegmentSelect: (index: number) => {
-          this.swiperController.changeIndex(index, true);
-        }
-      })
-        .height(48)
-        .backgroundColor(Color.White)
+      this.navBarBuilder()
 
       Swiper(this.swiperController) {
         LazyForEach(this.viewModel.pagesDataSource, (item: SegmentItem, index: number) => {
@@ -79,15 +115,20 @@ export struct HomePage {
       .cachedCount(1)
       .onChange((index: number) => {
         Logger.info({ domain: 'Home' }, 'swiper change idx:%d', index);
-        this.segmentController.scrollToIndex(index, true);
+        this.segmentController.selectIndex(index, true);
       })
       .onGestureSwipe((index: number, extraInfo: SwiperAnimationEvent) => {
         Logger.info({ domain: 'Home' }, `Gesture swipe index:${index}, extra:${JSON.stringify(extraInfo)}`);
-        // const swiperWidth = this.swiperWidth; // 建议从 onAreaChange 获取实际宽度
-        // const ratio = extraInfo.currentOffset / swiperWidth;
-        //
-        // // 实时通知导航栏移动
-        // this.segmentController.setOffset(index, ratio);
+        const progress = index - (extraInfo.currentOffset / this.swiperWidth);
+        this.segmentController.setScrollOffset(progress);
+      })
+      .onAnimationStart((index: number, targetIndex: number, extraInfo: SwiperAnimationEvent) => {
+        this.getUIContext().animateTo({
+          duration: 250,
+          curve: Curve.EaseOut
+        }, () => {
+          this.segmentController.setScrollOffset(targetIndex);
+        })
       })
       .onAreaChange((oldValue: Area, newValue: Area) => {
         this.swiperWidth = newValue.width as number;

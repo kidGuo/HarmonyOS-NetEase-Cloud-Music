@@ -4,21 +4,35 @@
  */
 import { SegmentItem } from '../../models/home/SegmentItem';
 import { Logger } from '../../utils/Logger';
+import { JSON } from '@kit.ArkTS';
 
 export class SegmentController {
-  private callback: (index: number, animated: boolean) => void = () => {
+  private scrollIndexCallback: (index: number, animated: boolean) => void = () => {
+  };
+  private offsetCallback: (offset: number) => void = () => {
   };
 
-  scrollToIndex(index: number, animated: boolean) {
-    this.callback(index, animated);
+  selectIndex(index: number, animated: boolean) {
+    this.scrollIndexCallback(index, animated);
   }
 
-  bindView(cb: (index: number, animated: boolean) => void) {
-    this.callback = cb;
+  setScrollOffset(offset: number) {
+    this.offsetCallback(offset);
   }
 
-  unbindView() {
-    this.callback = () => {
+  onSelectIndex(cb: (index: number, animated: boolean) => void) {
+    this.scrollIndexCallback = cb;
+  }
+
+  onOffsetUpdate(cb: (offset: number) => void) {
+    this.offsetCallback = cb;
+  }
+
+  detachView() {
+    this.scrollIndexCallback = () => {
+    };
+    this.offsetCallback = () => {
+
     };
   }
 }
@@ -28,15 +42,15 @@ export class SegmentController {
 export struct SegmentedView {
   @Param items: SegmentItem[] = [];
   @Param @Once selectedIndex: number = 0;
-  @Local indicatorWidth: number = 20;
   @Local indicatorOffset: number = 0;
   @Param segmentController: SegmentController = new SegmentController();
   // 事件回调
   @Event onSegmentSelect?: (index: number) => void;
-  //
+  // 私有
   private containerWidth: number = 0;
   private itemsArea: (Area | undefined)[] = [];
   private scroller: Scroller = new Scroller();
+  private indicatorWidth: number = 20;
 
   aboutToAppear(): void {
     this.commonInitialization();
@@ -48,13 +62,16 @@ export struct SegmentedView {
 
   private commonInitialization() {
     this.itemsArea = new Array(this.itemsArea.length).fill(undefined);
-    this.segmentController.bindView((index: number, animated: boolean) => {
+    this.segmentController.onSelectIndex((index: number, animated: boolean) => {
       this.doScrollToIndex(index, animated);
+    })
+    this.segmentController.onOffsetUpdate((offset: number) => {
+      this.updateIndicatorByProgress(offset);
     })
   }
 
   private deinit() {
-    this.segmentController.unbindView();
+    this.segmentController.detachView();
   }
 
   private updateIndicator(index: number, animated: boolean) {
@@ -111,6 +128,42 @@ export struct SegmentedView {
     this.updateIndicator(index, true);
     this.scrollToCenter(index);
     this.onSegmentSelect?.(index);
+  }
+
+  private updateIndicatorByProgress(progress: number) {
+    // 1. 获取当前所在的起始索引
+    const floorIndex = Math.floor(progress);
+    // 2. 目标索引（确保不越界）
+    const ceilIndex = Math.min(floorIndex + 1, this.items.length - 1);
+
+    // 3. 计算在该区间内的百分比 (0 ~ 1)
+    const percent = progress - floorIndex;
+
+    const areaStart = this.itemsArea[floorIndex];
+    const areaEnd = this.itemsArea[ceilIndex];
+
+    if (!areaStart) {
+      return;
+    }
+
+    Logger.info({ domain: 'Segment' },
+      `Update indicator by progress, floor:${floorIndex}, ceil:${ceilIndex}, endArea:${JSON.stringify(areaEnd)}`);
+    // 如果已经在最后一页或者起始和结束是同一位置，直接定位
+    if (!areaEnd || floorIndex === ceilIndex) {
+      const w = (areaStart.width as number) - 30;
+      this.indicatorWidth = w;
+      this.indicatorOffset = (areaStart.position.x as number) + (areaStart.width as number) / 2.0 - w / 2.0;
+      return;
+    }
+
+    // 4. 线性插值计算 (LERP)
+    const wStart = (areaStart.width as number) - 30;
+    const wEnd = (areaEnd.width as number) - 30;
+    this.indicatorWidth = wStart + (wEnd - wStart) * percent;
+
+    const xStart = (areaStart.position.x as number) + (areaStart.width as number) / 2.0 - wStart / 2.0;
+    const xEnd = (areaEnd.position.x as number) + (areaEnd.width as number) / 2.0 - wEnd / 2.0;
+    this.indicatorOffset = xStart + (xEnd - xStart) * percent;
   }
 
   build() {
