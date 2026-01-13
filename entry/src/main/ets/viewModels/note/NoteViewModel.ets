@@ -5,7 +5,7 @@
 import { SegmentItem } from '../../models/home/SegmentItem';
 import { NoteService } from '../../services/note/NoteService';
 import { Logger } from '../../utils/Logger';
-import { SegmentController } from '../../views/homePage/SegmentedView';
+import { SegmentController } from '../../views/commonViews/SegmentView/SegmentedView';
 import { BaseWaterFlowViewModel } from '../baseViewModel/BaseWaterFlowViewModel';
 
 @ObservedV2

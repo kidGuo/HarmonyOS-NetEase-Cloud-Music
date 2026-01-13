@@ -2,9 +2,10 @@
  * Author: Finn Guo
  * Date: 2025/12/21
  */
-import { SegmentItem } from '../../models/home/SegmentItem';
-import { Logger } from '../../utils/Logger';
+import { SegmentItem } from '../../../models/home/SegmentItem';
+import { Logger } from '../../../utils/Logger';
 import { JSON } from '@kit.ArkTS';
+import { SegmentedStyle } from './SegmentedStyle';
 
 export class SegmentController {
   private scrollIndexCallback: (index: number, animated: boolean) => void = () => {
@@ -44,13 +45,14 @@ export struct SegmentedView {
   @Param @Once selectedIndex: number = 0;
   @Local indicatorOffset: number = 0;
   @Param segmentController: SegmentController = new SegmentController();
+  @Param style: SegmentedStyle = new SegmentedStyle();
+  //
   // 事件回调
   @Event onSegmentSelect?: (index: number) => void;
   // 私有
   private containerWidth: number = 0;
   private itemsArea: (Area | undefined)[] = [];
   private scroller: Scroller = new Scroller();
-  private indicatorWidth: number = 20;
 
   aboutToAppear(): void {
     this.commonInitialization();
@@ -88,12 +90,12 @@ export struct SegmentedView {
           duration: 300,
           curve: Curve.FastOutSlowIn
         }, () => {
-          this.indicatorWidth = itemWidth - 30;
-          this.indicatorOffset = realX + itemWidth / 2.0 - this.indicatorWidth / 2.0;
+          this.style.indicatorWidth = itemWidth - this.style.indicatorHorizontalInset;
+          this.indicatorOffset = realX + itemWidth / 2.0 - this.style.indicatorWidth / 2.0;
         })
       } else {
-        this.indicatorWidth = itemWidth - 30;
-        this.indicatorOffset = realX + itemWidth / 2.0 - this.indicatorWidth / 2.0;
+        this.style.indicatorWidth = itemWidth - this.style.indicatorHorizontalInset;
+        this.indicatorOffset = realX + itemWidth / 2.0 - this.style.indicatorWidth / 2.0;
       }
     }
   }
@@ -131,12 +133,12 @@ export struct SegmentedView {
   }
 
   private updateIndicatorByProgress(progress: number) {
-    // 1. 获取当前所在的起始索引
+    // 获取当前所在的起始索引
     const floorIndex = Math.floor(progress);
-    // 2. 目标索引（确保不越界）
+    // 目标索引（确保不越界）
     const ceilIndex = Math.min(floorIndex + 1, this.items.length - 1);
 
-    // 3. 计算在该区间内的百分比 (0 ~ 1)
+    // 计算在该区间内的百分比 (0 ~ 1)
     const percent = progress - floorIndex;
 
     const areaStart = this.itemsArea[floorIndex];
@@ -150,16 +152,16 @@ export struct SegmentedView {
       `Update indicator by progress, floor:${floorIndex}, ceil:${ceilIndex}, endArea:${JSON.stringify(areaEnd)}`);
     // 如果已经在最后一页或者起始和结束是同一位置，直接定位
     if (!areaEnd || floorIndex === ceilIndex) {
-      const w = (areaStart.width as number) - 30;
-      this.indicatorWidth = w;
+      const w = (areaStart.width as number) - this.style.indicatorHorizontalInset;
+      this.style.indicatorWidth = w;
       this.indicatorOffset = (areaStart.position.x as number) + (areaStart.width as number) / 2.0 - w / 2.0;
       return;
     }
 
-    // 4. 线性插值计算 (LERP)
-    const wStart = (areaStart.width as number) - 30;
-    const wEnd = (areaEnd.width as number) - 30;
-    this.indicatorWidth = wStart + (wEnd - wStart) * percent;
+    //
+    const wStart = (areaStart.width as number) - this.style.indicatorHorizontalInset;
+    const wEnd = (areaEnd.width as number) - this.style.indicatorHorizontalInset;
+    this.style.indicatorWidth = wStart + (wEnd - wStart) * percent;
 
     const xStart = (areaStart.position.x as number) + (areaStart.width as number) / 2.0 - wStart / 2.0;
     const xEnd = (areaEnd.position.x as number) + (areaEnd.width as number) / 2.0 - wEnd / 2.0;
@@ -176,14 +178,15 @@ export struct SegmentedView {
                 Text(segmentItem.name)
                   .textAlign(TextAlign.Center)
                   .fontSize(16)
-                  .fontColor(this.selectedIndex === index ? Color.Black : '#8E8E93')
+                  .fontColor(this.selectedIndex === index ? this.style.contentSelectedColor :
+                    this.style.contentNormalColor)
                   .fontWeight(this.selectedIndex === index ? FontWeight.Bold : FontWeight.Normal)
-                  .padding({
-                    left: 12,
-                    right: 12,
-                    top: 12
-                  })
+                  .padding(this.style.contentPadding)
               }
+              .margin({
+                left: index === 0 ? 0 : this.style.spaceGap / 2.0,
+                right: index === this.items.length - 1 ? 0 : this.style.spaceGap / 2.0
+              })
               .onAreaChange((oldValue: Area, newValue: Area) => {
                 this.itemsArea[index] = (newValue as Area);
                 if (this.selectedIndex === index) {
@@ -198,10 +201,10 @@ export struct SegmentedView {
           .height('100%')
 
           Line()
-            .width(this.indicatorWidth)
-            .height(3)
-            .backgroundColor(Color.Black)
-            .borderRadius(3)
+            .width(this.style.indicatorWidth)
+            .height(this.style.indicatorHeight)
+            .backgroundColor(this.style.indicatorColor)
+            .borderRadius(this.style.indicatorHeight / 2.0)
             .offset({ x: this.indicatorOffset, y: 0 })
         }
       }

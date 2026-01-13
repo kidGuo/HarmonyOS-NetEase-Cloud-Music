@@ -14,7 +14,7 @@ export struct MineMusicCard {
       Image(this.item?.picUrl || '')
         .size({ width: 60, height: 60 })
         .borderRadius(8)
-        .margin({ right: 10 })
+        .margin({ left: 12, right: 10 })
 
       Column() {
         Text((this.index === 0 ? '我喜欢的音乐' : this.item?.name))
@@ -29,6 +29,7 @@ export struct MineMusicCard {
 
       Image($r('app.media.more'))
         .size({ width: 24, height: 24 })
+        .margin({ right: 12 })
     }
   }
 }

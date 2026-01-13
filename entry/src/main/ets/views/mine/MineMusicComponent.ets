@@ -21,7 +21,10 @@ export struct MineMusicComponent {
       }, (item: MineFavItem, index: number) => item.id.toString())
     }
     .scrollBar(BarState.Off)
-    .enabled(false)
+    .nestedScroll({
+      scrollForward: NestedScrollMode.PARENT_FIRST,
+      scrollBackward: NestedScrollMode.SELF_FIRST
+    })
     .width('100%')
     .height('100%')
   }

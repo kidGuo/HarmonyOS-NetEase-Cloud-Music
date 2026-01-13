@@ -6,11 +6,12 @@ import { Logger } from '../../utils/Logger';
 import { MineViewModel } from '../../viewModels/mine/MineViewModel';
 import { JSON } from '@kit.ArkTS';
 import { MenuItem } from '../../models/mine/MenuItem';
-import { SegmentedView } from '../../views/homePage/SegmentedView';
+import { SegmentedView } from '../../views/commonViews/SegmentView/SegmentedView';
 import { SegmentItem } from '../../models/home/SegmentItem';
 import { MineMusicComponent } from '../../views/mine/MineMusicComponent';
 import { MinePodcastComponent } from '../../views/mine/MinePodcastComponent';
 import { MineNoteComponent } from '../../views/mine/MineNoteComponent';
+import { MineNavBar } from '../../views/mine/MineNavBar';
 
 @Preview
 @ComponentV2
@@ -24,6 +25,7 @@ export struct MinePage {
   build() {
     Stack({ alignContent: Alignment.Top }) {
       this.headerBackgroundBuilder()
+      this.navBarBuilder()
 
       Scroll(this.viewModel.getScroller()) {
         Column() {
@@ -40,6 +42,7 @@ export struct MinePage {
             items: this.viewModel.cates,
             selectedIndex: this.viewModel.currentIndex,
             segmentController: this.viewModel.getSegmentController(),
+            style: this.viewModel.getSegmentedStyle(),
             onSegmentSelect: (index: number) => {
               this.viewModel.currentIndex = index;
             }
@@ -47,7 +50,6 @@ export struct MinePage {
             .width('100%')
             .height(44)
             .backgroundColor(Color.White)
-            .clip(true)
             .borderRadius({
               topLeft: 8,
               topRight: 8
@@ -98,10 +100,19 @@ export struct MinePage {
       .scrollBar(BarState.Off)
       .edgeEffect(EdgeEffect.Spring)
       .onDidScroll((xOffset: number, yOffset: number, scrollState: ScrollState) => {
-        Logger.info({ domain: 'MinePage' },
-          `on did scroll yoffset:${yOffset}, totalHeight:${this.viewModel.headerHeight - yOffset}`);
+
         this.viewModel.scrollY = this.viewModel.getScroller().currentOffset().yOffset;
+        this.viewModel.navBgAlpha =
+          Math.max(0,
+            Math.min(1, (this.viewModel.getScroller().currentOffset().yOffset - this.viewModel.navBarThreshold) /
+            this.viewModel.navBarThreshold));
+
+        Logger.info({ domain: 'MinePage' },
+          `on did scroll yoffset:${yOffset}, currenoffset:${this.viewModel.getScroller()
+            .currentOffset()
+            .yOffset}, navalph:${this.viewModel.navBgAlpha}`);
       })
+
     }
     .width('100%')
     .height('100%')
@@ -113,11 +124,22 @@ export struct MinePage {
 
   @Builder
   headerBackgroundBuilder() {
-    Image($r('app.media.mine_background'))
+    Image($r('app.media.profile_background'))
       .objectFit(ImageFit.Cover)
       .width('100%')
       .height(this.viewModel.scrollY < 0 ? this.viewModel.headerHeight - this.viewModel.scrollY :
         this.viewModel.headerHeight)
+  }
+
+  @Builder
+  navBarBuilder() {
+    MineNavBar({
+      isDark: false,
+      bgAlpha: this.viewModel.navBgAlpha
+    })
+      .width('100%')
+      .height(64)
+      .zIndex(10)
   }
 
   @Builder

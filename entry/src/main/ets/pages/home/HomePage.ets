@@ -5,7 +5,7 @@
 import { SegmentItem } from '../../models/home/SegmentItem';
 import { Logger } from '../../utils/Logger';
 import { HomeViewModel } from '../../viewModels/home/HomeViewModel';
-import { SegmentController, SegmentedView } from '../../views/homePage/SegmentedView';
+import { SegmentController, SegmentedView } from '../../views/commonViews/SegmentView/SegmentedView';
 import { AudiobookPlayerPage } from './AudiobookPlayerPage';
 import { DiscoveryPage } from './DiscoveryPage';
 import { MusicPlayerPage } from './MusicPlayerPage';

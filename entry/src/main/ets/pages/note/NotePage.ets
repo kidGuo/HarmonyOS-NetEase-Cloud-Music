@@ -9,7 +9,7 @@ import { NoteViewModel } from '../../viewModels/note/NoteViewModel';
 import { WaterFlowComponent } from '../../views/commonViews/WaterFlow/WaterFlowComponent';
 import { WaterFlowItem } from '../../views/commonViews/WaterFlow/WaterFlowItem';
 import { HomeNavBar } from '../../views/homePage/HomeNavBar';
-import { SegmentedView } from '../../views/homePage/SegmentedView';
+import { SegmentedView } from '../../views/commonViews/SegmentView/SegmentedView';
 import { NoteCard } from '../../views/note/NoteCard';
 import { JSON } from '@kit.ArkTS';
 
