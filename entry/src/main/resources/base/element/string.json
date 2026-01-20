@@ -11,6 +11,14 @@
     {
       "name": "EntryAbility_label",
       "value": "网易云音乐"
+    },
+    {
+      "name": "reason_app_tracking",
+      "value": "为了提供更个性化的广告推荐和内容体验，我们需要申请广告追踪权限。"
+    },
+    {
+      "name": "reason_location",
+      "value": "我们需要获取您的位置信息，以便为您展示附近的门店和天气信息。"
     }
   ]
 }

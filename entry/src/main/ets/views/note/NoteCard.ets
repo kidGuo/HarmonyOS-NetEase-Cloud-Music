@@ -14,6 +14,7 @@ export struct NoteCard {
         .width('100%')
         .aspectRatio(this.item.webformatWidth / this.item.webformatHeight)
         .margin({ bottom: 8 })
+        .geometryTransition(this.item.id.toString())
 
       Text(this.item.tags)
         .fontSize(16)

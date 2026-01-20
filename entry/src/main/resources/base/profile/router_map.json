@@ -23,6 +23,14 @@
       "data": {
         "description": "this is web page"
       }
+    },
+    {
+      "name": "NoteDetail",
+      "pageSourceFile": "src/main/ets/pages/note/NoteDetailPage.ets",
+      "buildFunction": "noteDetailPageBuilder",
+      "data": {
+        "description": "this is note detail page"
+      }
     }
   ]
 }

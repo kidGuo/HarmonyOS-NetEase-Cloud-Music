@@ -15,6 +15,7 @@ import { JSON } from '@kit.ArkTS';
 
 @ComponentV2
 export struct NotePage {
+  @Consumer() pathStack: NavPathStack = new NavPathStack();
   viewModel: NoteViewModel = new NoteViewModel();
 
   aboutToAppear(): void {
@@ -25,6 +26,12 @@ export struct NotePage {
   noteCardBuilder(item: WaterFlowItem, index: number) {
     NoteCard({ item: (item as NoteItem) })
       .backgroundColor(Color.White)
+      .onClick(() => {
+        const noteItem = item as NoteItem;
+        if (noteItem) {
+          this.pathStack.pushPathByName('NoteDetail', noteItem, false);
+        }
+      })
   }
 
   @Builder
@@ -96,7 +103,9 @@ export struct NotePage {
               isLoadingMore: this.viewModel.isLoadingMore,
               dataSource: this.viewModel.getDataSource(),
               waterFlowSections: this.viewModel.getSections(),
-              itemBuilder: this.noteCardBuilder,
+              itemBuilder: (item: WaterFlowItem, index: number) => {
+                this.noteCardBuilder(item, index)
+              },
               getItemReuseId: (item: WaterFlowItem, index: number) => "NoteCard",
               onRefresh: () => {
                 this.viewModel.refreshData();

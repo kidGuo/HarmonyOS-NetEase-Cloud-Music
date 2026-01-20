@@ -4,7 +4,7 @@
  */
 
 export class NoteItem {
-  id: string = '';
+  id: number = 0;
   pageURL: string = '';
   tags: string = '';
   previewURL: string = '';

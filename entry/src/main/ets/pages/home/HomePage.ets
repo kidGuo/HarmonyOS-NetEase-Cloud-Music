@@ -8,7 +8,6 @@ import { HomeViewModel } from '../../viewModels/home/HomeViewModel';
 import { SegmentController, SegmentedView } from '../../views/commonViews/SegmentView/SegmentedView';
 import { AudiobookPlayerPage } from './AudiobookPlayerPage';
 import { DiscoveryPage } from './DiscoveryPage';
-import { MusicPlayerPage } from './MusicPlayerPage';
 import { MusicsPage } from './MusicsPage';
 import { PodcastPage } from './PodcastPage';
 import { JSON } from '@kit.ArkTS';
@@ -16,6 +15,7 @@ import { AIWriterPage } from './AIWriterPage';
 import { MidnightFlightPage } from './MidnightFlightPage';
 import { WebComponent } from '../web/WebComponent';
 import { HomeNavBar } from '../../views/homePage/HomeNavBar';
+import { FavoriteMusicPage } from './FavoriteMusicPage';
 
 @ComponentV2
 export struct HomePage {
@@ -90,7 +90,7 @@ export struct HomePage {
     } else if (segmentItem.id === '20025008') {
       MidnightFlightPage()
     } else {
-      MusicPlayerPage()
+      FavoriteMusicPage()
     }
   }
 
@@ -112,10 +112,11 @@ export struct HomePage {
       .loop(false)
       .layoutWeight(1)
       .width('100%')
-      .cachedCount(1)
+      .cachedCount(3)
       .onChange((index: number) => {
         Logger.info({ domain: 'Home' }, 'swiper change idx:%d', index);
         this.segmentController.selectIndex(index, true);
+        this.viewModel.updateSegmentIndex(index);
       })
       .onGestureSwipe((index: number, extraInfo: SwiperAnimationEvent) => {
         Logger.info({ domain: 'Home' }, `Gesture swipe index:${index}, extra:${JSON.stringify(extraInfo)}`);
@@ -123,6 +124,7 @@ export struct HomePage {
         this.segmentController.setScrollOffset(progress);
       })
       .onAnimationStart((index: number, targetIndex: number, extraInfo: SwiperAnimationEvent) => {
+        this.viewModel.updateSegmentIndex(targetIndex);
         this.getUIContext().animateTo({
           duration: 250,
           curve: Curve.EaseOut

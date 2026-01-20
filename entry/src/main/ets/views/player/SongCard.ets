@@ -15,8 +15,10 @@ export struct SongCard {
         .aspectRatio(1)
       Image(this.coverImage)
         .objectFit(ImageFit.Cover)
-        .width('60%')
+        .width('52%')
         .aspectRatio(1)
+        .borderRadius('50%')
+        .clip(true)
     }
   }
 }

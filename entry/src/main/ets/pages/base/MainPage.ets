@@ -4,11 +4,16 @@
  */
 import { TabBarItem } from '../../models/main/TabBarItem';
 import MainViewModel from '../../viewModels/main/MainViewModel';
+import { PlayerBar } from '../../views/player/PlayerBar';
+import { CategoryPage } from '../category/CategoryPage';
 import { HomePage } from '../home/HomePage';
 import { MinePage } from '../mine/MinePage';
 import { NotePage } from '../note/NotePage';
-import { SearchPage } from '../search/SearchPage';
 import { DrawerPage } from './DrawerPage';
+import { emitter } from '@kit.BasicServicesKit';
+import { EVENT_ID_TAB_SEGMENT_INDEX_DATA } from '../../utils/EventData';
+import { MusicPlaybackState } from '../../models/player/MusicPlaybackState';
+import { AppStorageV2 } from '@kit.ArkUI';
 
 @Builder
 function mainPageBuilder() {
@@ -19,7 +24,27 @@ function mainPageBuilder() {
 @ComponentV2
 export struct MainPage {
   @Local currentIdx: number = 0;
+  @Local segmentIdx: number = 1;
   mainViewModel: MainViewModel = new MainViewModel();
+  playbackState: MusicPlaybackState =
+    AppStorageV2.connect(MusicPlaybackState, 'MusicPlaybackState', () => new MusicPlaybackState())!
+
+  aboutToAppear(): void {
+    emitter.on({ eventId: EVENT_ID_TAB_SEGMENT_INDEX_DATA }, (eventData) => {
+      if (eventData.data) {
+        this.segmentIdx = eventData.data.segmentIdx;
+      }
+    })
+  }
+
+  @Computed
+  get shouldShowPlayerBar(): boolean {
+    if (!this.playbackState.isPlayed) {
+      return false;
+    }
+    const isAtHomeFirstSegment = this.currentIdx === 0 && this.segmentIdx === 0;
+    return !isAtHomeFirstSegment;
+  }
 
   @Builder
   tabBarBuilder(tabBarItem: TabBarItem, index: number) {
@@ -34,18 +59,19 @@ export struct MainPage {
     .width('100%')
     .margin({ top: 16 })
     .alignItems(HorizontalAlign.Center)
+    .backgroundColor(Color.Transparent)
   }
 
   build() {
     NavDestination() {
-      Stack() {
+      Stack({ alignContent: Alignment.Bottom }) {
         Tabs() {
           ForEach(this.mainViewModel.tabItems, (tabBarItem: TabBarItem, idx: number) => {
             TabContent() {
               if (tabBarItem.id === '2025001') {
-                HomePage();
+                HomePage()
               } else if (tabBarItem.id === '2025002') {
-                SearchPage();
+                CategoryPage();
               } else if (tabBarItem.id === '2025003') {
                 NotePage();
               } else if (tabBarItem.id === '2025004') {
@@ -69,6 +95,13 @@ export struct MainPage {
           this.currentIdx = index;
         })
 
+        // 播放条
+        if (this.shouldShowPlayerBar) {
+          PlayerBar()
+            .margin({ bottom: 56 })
+        }
+
+        // 侧栏
         DrawerPage()
       }
     }

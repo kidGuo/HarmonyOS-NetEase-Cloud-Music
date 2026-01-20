@@ -9,16 +9,21 @@ import { MVItem } from '../../models/home/MVItem';
 import { PersonalItem } from '../../models/home/PersonalItem';
 import { RecommendItem } from '../../models/home/RecommendItem';
 import { SegmentItem } from '../../models/home/SegmentItem';
+import { SongItem } from '../../models/home/SongItem';
 import { TopListItem } from '../../models/home/TopListItem';
 import { HomeService } from '../../services/home/HomeService';
+import { playerController } from '../player/MusicPlayerController';
 import { HomeSegmentDataSource } from './HomeSegmentDataSource';
+import { emitter } from '@kit.BasicServicesKit';
+import { EVENT_ID_TAB_SEGMENT_INDEX_DATA } from '../../utils/EventData';
 
 @ObservedV2
 export class HomeViewModel {
   segmentItems: SegmentItem[] =
     [{ id: "20025001", name: "心动" }, { id: "20025002", name: "推荐" }, { id: "20025003", name: "音乐" },
-      { id: "20025004", name: "播客" }, { id: "20025005", name: "听书" }, { id: "20025006", name: "AI写歌" },
-      { id: "20025007", name: "年报" }, { id: "20025008", name: "午夜飞行" }];
+      { id: "20025006", name: "AI写歌" }, { id: "20025007", name: "年报" }, { id: "20025004", name: "播客" },
+      { id: "20025005", name: "听书" },
+      { id: "20025008", name: "午夜飞行" }];
   pagesDataSource: HomeSegmentDataSource = new HomeSegmentDataSource(this.segmentItems);
   // 热门榜单
   @Trace topList: TopListItem[] = [];
@@ -50,6 +55,9 @@ export class HomeViewModel {
   async getNewSongs() {
     const data = await HomeService.getNewSongs();
     this.scenePlaylist = data;
+    //
+    const songItems: SongItem[] = this.scenePlaylist.flatMap(item => item.song ? [item.song] : []);
+    playerController.addSongsToEnd(songItems, false);
   }
 
   async getPrivateContent() {
@@ -111,5 +119,15 @@ export class HomeViewModel {
   async getCateList() {
     const data = await HomeService.getCateList();
     this.cateItems = data;
+  }
+
+  //
+  updateSegmentIndex(index: number) {
+    emitter.emit({ eventId: EVENT_ID_TAB_SEGMENT_INDEX_DATA }, {
+      data: {
+        'tabIdx': 0,
+        'segmentIdx': index
+      }
+    })
   }
 }
