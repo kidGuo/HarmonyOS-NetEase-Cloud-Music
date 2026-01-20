@@ -1,5 +1,15 @@
 # 网易云音乐 HarmonyOS 版
 
+## 🎬 演示视频
+
+<div align="center">
+  <video src="./images/video.mov" controls width="600"></video>
+</div>
+
+> 如果视频无法播放，请下载到本地查看：`images/video.mov`
+
+## 📸 应用截图
+
 <div align="center">
   <img src="./images/Screenshot_1.png" width="200" />
   <img src="./images/Screenshot_2.png" width="200" />
@@ -16,7 +26,7 @@
 
 ## 📖 项目简介
 
-这是一个基于 HarmonyOS 鸿蒙系统开发的网易云音乐客户端，参考了网易云音乐 iOS 版本的视觉设计和交互体验。项目采用 ArkTS 语言开发，展示了鸿蒙应用开发的最佳实践。
+这是一个基于 HarmonyOS 鸿蒙系统开发的网易云音乐客户端，参考了网易云音乐 iOS 版本的视觉设计和交互体验。项目采用 ArkTS 语言开发，是个人在探索学习鸿蒙应用开发过程中的一次尝试。
 
 
 ## 🛠️ 技术栈
@@ -24,7 +34,7 @@
 - **开发语言**: ArkTS
 - **开发框架**: HarmonyOS SDK
 - **网络请求**: @ohos/axios (v2.2.6)
-- **AI 模型**: DeepSeek API
+- **AI 模型**: DeepSeek API（用于 AI 歌词创作功能）
 
 ## 📋 环境要求
 
@@ -51,9 +61,9 @@ ohpm install
 
 > **注意**: 如果 `ohpm` 命令不可用，请确保已正确安装 DevEco Studio 并配置好环境变量。
 
-### 3. 配置 DeepSeek API Key
+### 3. 配置 DeepSeek API Key（可选）
 
-如果要使用 AI 歌词创作功能，需要配置 DeepSeek API Key：
+如果需要体验 AI 歌词创作功能，请配置 DeepSeek API Key：
 
 1. 前往 [DeepSeek 官网](https://www.deepseek.com/) 注册并获取 API Key
 2. 打开 `entry/src/main/ets/utils/EnvConfig.ets` 文件
@@ -110,44 +120,40 @@ NetEasyMusic/
 - **版本**: 公开 API
 - **超时设置**: 30 秒
 
-> **免责声明**: 本项目仅用于学习交流，API 接口来自网易云音乐公开接口。请勿用于商业用途。
+> **免责声明**: 本项目仅用于个人学习交流，API 接口来自网易云音乐公开接口，请勿用于任何商业用途。
 
 ### DeepSeek API
 
-- AI 歌词创作功能使用 DeepSeek 大语言模型
-- 需要自行申请 API Key
+- AI 歌词创作功能基于 DeepSeek 大语言模型实现
+- 使用前需自行申请 API Key
 - 配置位置: `entry/src/main/ets/utils/EnvConfig.ets`
 
-## 🎬 演示视频
+## 🎬 演示说明
 
-项目包含演示视频，位于 `images/video.mov`
-
-## 📸 应用截图
-
-更多截图请查看 `images/` 目录
+项目包含演示视频和截图，详见 `images/` 目录
 
 ## 🤝 贡献
 
-欢迎提交 Issue 和 Pull Request！
+如发现问题或有改进建议，欢迎提交 Issue 和 Pull Request，不胜感激！
 
 ## 📄 开源协议
 
-本项目仅供学习交流使用，请勿用于商业目的。
+本项目仅供学习交流使用，请勿用于任何商业目的。
 
 ## ⚠️ 免责声明
 
-- 本项目是个人学习项目，与网易云音乐官方无关
-- 项目中使用的 API 接口仅供学习使用
-- 请支持正版音乐，尊重版权
+- 本项目为个人学习项目，与网易云音乐官方无任何关联
+- 项目中使用的 API 接口仅供学习研究使用
+- 请支持正版音乐，尊重知识产权
 
 ## 👨‍💻 作者
 
 Finn Guo
 
-## 📮 联系方式
+## 📮 反馈与建议
 
-如有问题或建议，欢迎通过 GitHub Issues 联系。
+如有问题或建议，欢迎通过 GitHub Issues 交流探讨。
 
 ---
 
-⭐ 如果这个项目对你有帮助，欢迎 Star！
+⭐ 如果这个项目对你有所帮助或启发，欢迎 Star 支持！
