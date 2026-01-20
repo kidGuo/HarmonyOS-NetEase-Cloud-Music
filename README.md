@@ -1,13 +1,5 @@
 # 网易云音乐 HarmonyOS 版
 
-## 🎬 演示视频
-
-<div align="center">
-  <video src="./images/video.mov" controls width="600"></video>
-</div>
-
-> 如果视频无法播放，请下载到本地查看：`images/video.mov`
-
 ## 📸 应用截图
 
 <div align="center">
