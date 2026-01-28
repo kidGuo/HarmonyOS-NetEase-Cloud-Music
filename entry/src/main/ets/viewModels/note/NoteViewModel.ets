@@ -3,6 +3,7 @@
  * Date: 2026/1/4
  */
 import { SegmentItem } from '../../models/home/SegmentItem';
+import { NoteItem } from '../../models/note/NoteItem';
 import { NoteService } from '../../services/note/NoteService';
 import { Logger } from '../../utils/Logger';
 import { SegmentController } from '../../views/commonViews/SegmentView/SegmentedView';
@@ -16,6 +17,8 @@ export class NoteViewModel extends BaseWaterFlowViewModel {
   @Trace isRefreshing: boolean = false;
   @Trace currentIndex: number = 1;
   @Trace isLoadingMore: boolean = false;
+  @Trace isShowDetailView: boolean = false;
+  selectedNote: NoteItem | null = null;
 
   constructor() {
     super()

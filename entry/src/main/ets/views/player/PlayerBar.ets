@@ -6,6 +6,7 @@ import { MusicPlaybackState } from '../../models/player/MusicPlaybackState';
 import { AppStorageV2 } from '@kit.ArkUI';
 import { playerController } from '../../viewModels/player/MusicPlayerController';
 import { SongItem } from '../../models/home/SongItem';
+import { AlbumDetailComponent } from '../../pages/details/AlbumDetailComponent';
 
 @ComponentV2
 export struct PlayerBar {
@@ -13,6 +14,7 @@ export struct PlayerBar {
     AppStorageV2.connect(MusicPlaybackState, 'MusicPlaybackState', () => new MusicPlaybackState())!
   @Local isSheetShow: boolean = false;
   @Local rotateAngle: number = 0
+  @Local isShowAlbumDetail: boolean = false;
   private timer: number = -1
 
   @Monitor("playbackSate.isPlaying")
@@ -58,6 +60,11 @@ export struct PlayerBar {
             .margin(8)
             .borderRadius('50%')
             .clip(true)
+            .bindSheet($$this.isShowAlbumDetail, this.albumDetailBuilder(), {
+              height: SheetSize.MEDIUM,
+              showClose: false,
+              backgroundColor: Color.White
+            })
         }
         .justifyContent(FlexAlign.Center)
         .height(46)
@@ -71,6 +78,10 @@ export struct PlayerBar {
           curve: Curve.Linear,
           iterations: 1
         })
+        .onClick(() => {
+          this.isShowAlbumDetail = true;
+        })
+
 
         Row() {
           Text() {
@@ -251,5 +262,16 @@ export struct PlayerBar {
 
   getAuthorsName(songItem: SongItem): string {
     return songItem.artists.map((item) => item.name).join('/');
+  }
+
+  @Builder
+  albumDetailBuilder() {
+    AlbumDetailComponent({
+      onBack: () => {
+        this.isShowAlbumDetail = false;
+      }
+    })
+      .width('100%')
+      .height('100%')
   }
 }
